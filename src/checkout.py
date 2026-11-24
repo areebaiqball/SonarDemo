@@ -1,20 +1,18 @@
-def _item_category(item):
-    if item["qty"] <= 0:
-        return "empty"
-    if item["price"] > 100:
-        return "big"
-    if item["price"] > 50:
-        return "medium"
-    return "small"
-
-
 def process_orders(orders):
     results = []
     for order in orders:
-        status = order["status"]
-        if status == "paid":
-            results.extend(_item_category(item) for item in order["items"])
-        elif status == "pending":
+        if order["status"] == "paid":
+            for item in order["items"]:
+                if item["qty"] > 0:
+                    if item["price"] > 100:
+                        results.append("big")
+                    elif item["price"] > 50:
+                        results.append("medium")
+                    else:
+                        results.append("small")
+                else:
+                    results.append("empty")
+        elif order["status"] == "pending":
             if order["items"] and order["urgent"]:
                 results.append("rush")
         else:
